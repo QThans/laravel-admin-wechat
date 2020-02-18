@@ -10,6 +10,11 @@ Laravel admin 的微信扩展、支持多公众号、多小程序、多微信支
 
 ![~IOO_9`PNP__04333MJ1_97.png](https://i.loli.net/2020/02/08/5Zhk1mYo7OClujP.png)
 
+## 关联项目
+
+* [让你的 laravel-admin 更好看](https://github.com/Hanson/rainbow)
+* [wepy 小程序开发模板](https://github.com/Hanson/wepy-template)
+
 ## TO DO LIST
 
 - [x] 公众号与小程序配置
@@ -252,6 +257,28 @@ class OrderController extends Controller
     }
 }
 ```
+
+### 异常捕捉
+
+不但在此项目，在其他项目也建议你对 `app/Exceptions/Handler` 进行修改，因为对于接口的请求，laravel 默认在错误的情况会返回页面，这不是任何一个开发者所期望的情况
+
+```php
+// app/Exceptions/Handler.php
+<?php
+
+public function render($request, Exception $exception)
+{
+    if ($request->acceptsJson()) {
+        if ($exception instanceof AuthenticationException) {
+            return Response::json(['err_code' => 401, 'err_msg' => 'Unauthenticated'], 401);
+        }
+        return fail($exception->getMessage());
+    }
+    return parent::render($request, $exception);
+}
+```
+
+本扩展封装了函数 `fail` 和 `ok` 两个接口返回的基础结构，可以使用这两个函数去定义你所有的接口返回
 
 ## 特别鸣谢
 
